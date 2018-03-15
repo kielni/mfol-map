@@ -6,7 +6,8 @@ const app = new Vue({
   el: '#mapApp',
   data: {
     map: null,
-    markers: {},
+    events: {},
+    activeEvent: null;
   },
 
   mounted: function mounted() {
@@ -18,20 +19,36 @@ const app = new Vue({
       center: new google.maps.LatLng(41.850033, -87.6500523),
       mapTypeId: google.maps.MapTypeId.ROADMAP,
     });
+    this.geocoder = geocoder = new google.maps.Geocoder();
     // load json, then draw markers
     events.then(function(data) {
-      _this.events = data;
       // don't check for events on affiliate map; use all
       // US + southern Canada bounding box
       const lat = [55, 24.52];
       const lng = [-66.95, -124.77];
 
-      _this.markers = {}
+      _this.infowindow = new google.maps.InfoWindow({
+        content: 'test'
+      });
       data.forEach(function(ev) {
         const marker = new google.maps.Marker({
+          icon: 'https://s3.amazonaws.com/s3.everytown.org/action_kit/legacy/img/map_pin.png',
+          animation: google.maps.Animation.DROP,
           position: { lat: ev.latitude, lng: ev.longitude },
           map: _this.map,
-        })
+          eventId: ev.id,
+        });
+        google.maps.event.addListener(marker, 'click', function() {
+          console.log('click ', this);
+          _this.infowindow.close();
+          _this.activeEvent = _this.events[this.eventId];
+          _this.infowindow.setContent();
+          _this.infowindow.open(_this.map, this);
+        });
+        _this.events[ev.id] = {
+          event: ev,
+          marker: marker,
+        };
       });
       _this.map.fitBounds({
         west: _.min(lng),
@@ -39,11 +56,18 @@ const app = new Vue({
         east: _.max(lng),
         north: _.max(lat)
       });
-
     });
   },
 
   methods: {
+    clickMarker: function() {
+    },
+    geocode: function(results, status) {
+      if (status !== google.maps.GeocoderStatus.OK) {
+        console.log('error geocoding', status);
+        return;
+      }
+    },
     inIframe: function() {
       try {
         return window.self !== window.top;
