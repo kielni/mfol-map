@@ -1,0 +1,28 @@
+body {
+  background-color: #fff;
+  font-family: 'Roboto';
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#map {
+  height: 600px;
+}
+
+#mapApp {
+  display: none;
+}
+
+a {
+  color: #000;
+  text-decoration: underline;
+}
+
+#userMarker {
+  color: #1BAC9E;
+  display: none;
+}
