@@ -7,7 +7,7 @@ const app = new Vue({
   data: {
     map: null,
     events: {},
-    activeEvent: null;
+    activeEvent: null,
   },
 
   mounted: function mounted() {
