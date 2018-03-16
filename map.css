@@ -48,3 +48,17 @@ a.more-details {
   margin-top: 10px 0;
   margin-bottom: 1.5em;
 }
+
+#pac-input {
+  background-color: #fff;
+  font-size: 1.5em;
+  font-weight: 300;
+  margin-left: 12px;
+  text-overflow: ellipsis;
+  width: 400px;
+  padding: 10px;
+}
+
+#pac-input:focus {
+  order-color: #4d90fe;
+}

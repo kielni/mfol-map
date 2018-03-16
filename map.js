@@ -16,67 +16,67 @@ const app = new Vue({
 
     this.map = new google.maps.Map(document.getElementById('map'), {
       zoom: 8,
-      center: new google.maps.LatLng(41.850033, -87.6500523),
       mapTypeId: google.maps.MapTypeId.ROADMAP,
+      zoomControl: true,
+      mapTypeControl: false,
+      streetViewControl: false,
+      rotateControl: false,
+      fullscreenControl: false
     });
-    this.geocoder = geocoder = new google.maps.Geocoder();
     // load json, then draw markers
     events.then(function(data) {
-      // US + southern Canada bounding box
-      const lat = [55, 24.52];
-      const lng = [-66.95, -124.77];
-
       _this.infowindow = new google.maps.InfoWindow();
       data.forEach(function(ev) {
+        // set rsvp and formatted date
         ev.rsvp = 'https://event.marchforourlives.com/event/march-our-lives-events/' +
           ev.id +'/signup';
         ev.start_dt = moment(ev.time_at_iso, moment.ISO_8601).format('dddd, MMMM D, h:mm A')
+        // create marker
         const marker = new google.maps.Marker({
           icon: 'https://s3.amazonaws.com/s3.everytown.org/action_kit/legacy/img/map_pin.png',
-          animation: google.maps.Animation.DROP,
           position: { lat: ev.latitude, lng: ev.longitude },
           map: _this.map,
           eventId: ev.id,
         });
         google.maps.event.addListener(marker, 'click', function() {
-          console.log('click ', this);
           _this.activeEvent = _this.events[this.eventId];
           _this.infowindow.close();
-          _this.$nextTick(function () {
+          // when rendered, get content from activeEvent div and show in infowindow
+          _this.$nextTick(function() {
             _this.infowindow.setContent(document.getElementById('activeEvent').innerHTML);
             _this.infowindow.open(_this.map, _this.activeEvent.marker);
           })
         });
+        // save marker and event by id
         ev.marker = marker;
         _this.events[ev.id] = ev;
       });
+
+      // US + southern Canada bounding box
+      const lat = [55, 24.52];
+      const lng = [-66.95, -124.77];
       _this.map.fitBounds({
         west: _.min(lng),
         south: _.min(lat),
         east: _.max(lng),
         north: _.max(lat)
       });
+
+      // search box
+      _this.searchBox = new google.maps.places.SearchBox(document.getElementById('pac-input'));
+      _this.map.controls[google.maps.ControlPosition.TOP_CENTER].push(
+        document.getElementById('pac-input'));
+      google.maps.event.addListener(_this.searchBox, 'places_changed', function() {
+        _this.searchBox.set('map', null);
+        const places = _this.searchBox.getPlaces();
+        if (!places) {
+          return;
+        }
+        _this.map.setCenter({lat: places[0].geometry.location.lat(),
+          lng: places[0].geometry.location.lng()});
+        _this.searchBox.set('map', _this.map);
+        _this.map.setZoom(10);
+      });
     });
-  },
-
-  updated: function() {
-    const _this = this;
-    // after activeEvent section renders
-  },
-
-  methods: {
-    geocode: function(results, status) {
-      if (status !== google.maps.GeocoderStatus.OK) {
-        console.log('error geocoding', status);
-        return;
-      }
-    },
-    inIframe: function() {
-      try {
-        return window.self !== window.top;
-      } catch (e) {
-        return true;
-      }
-    },
   },
 });
