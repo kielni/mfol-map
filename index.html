@@ -16,8 +16,26 @@
       <i class="fa fa-circle"></i>
     </div>
 
-    <div v-if="activeEvent" class="info-window-content">
-      <h2><a href="#" target="_new"></a></h2>
+    <div v-if="activeEvent" id="activeEvent" class="info-window-content">
+      <h2>
+        <a :href="activeEvent.rsvp" target="_blank" class="event-title">
+          {{activeEvent.title}}
+        </a>
+      </h2>
+      <div class="body-content">
+        <div class="details">
+          {{activeEvent.start_dt}}<br>
+          {{activeEvent.address1}}, {{activeEvent.city_etc}}<br>
+        </div>
+        <div class="details">
+          <a :href="activeEvent.rsvp" class="more-details">More details &raquo;</a>
+        </div>
+        <div class="details">
+          <div class="rsvp">
+            <a :href="activeEvent.rsvp">RSVP</a>
+          </div>
+        </div>
+      </div>
     </div>
     <link rel="stylesheet" id="vc_google_fonts_roboto100100italic300300italicregularitalic500500italic700700italic900900italic-css" href="//fonts.googleapis.com/css?family=Roboto%3A100%2C100italic%2C300%2C300italic%2Cregular%2Citalic%2C500%2C500italic%2C700%2C700italic%2C900%2C900italic" type="text/css" media="all">
     <script

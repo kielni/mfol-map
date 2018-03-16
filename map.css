@@ -7,6 +7,8 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  font-family: "Open Sans", sans-serif;
+  font-size: 15.5px;
 }
 
 #map {
@@ -18,11 +20,31 @@ html, body {
 }
 
 a {
-  color: #000;
+  color: #268ECD;
   text-decoration: underline;
 }
 
 #userMarker {
   color: #1BAC9E;
   display: none;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.8em;
+  line-height: 1.35em;
+}
+
+.details {
+  margin: 0.3em 0;
+  line-height: 1.6em;
+}
+
+a.more-details {
+  color: #595959;
+}
+
+.rsvp {
+  margin-top: 10px 0;
+  margin-bottom: 1.5em;
 }

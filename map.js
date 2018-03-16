@@ -22,15 +22,15 @@ const app = new Vue({
     this.geocoder = geocoder = new google.maps.Geocoder();
     // load json, then draw markers
     events.then(function(data) {
-      // don't check for events on affiliate map; use all
       // US + southern Canada bounding box
       const lat = [55, 24.52];
       const lng = [-66.95, -124.77];
 
-      _this.infowindow = new google.maps.InfoWindow({
-        content: 'test'
-      });
+      _this.infowindow = new google.maps.InfoWindow();
       data.forEach(function(ev) {
+        ev.rsvp = 'https://event.marchforourlives.com/event/march-our-lives-events/' +
+          ev.id +'/signup';
+        ev.start_dt = moment(ev.time_at_iso, moment.ISO_8601).format('dddd, MMMM D, h:mm A')
         const marker = new google.maps.Marker({
           icon: 'https://s3.amazonaws.com/s3.everytown.org/action_kit/legacy/img/map_pin.png',
           animation: google.maps.Animation.DROP,
@@ -40,15 +40,15 @@ const app = new Vue({
         });
         google.maps.event.addListener(marker, 'click', function() {
           console.log('click ', this);
-          _this.infowindow.close();
           _this.activeEvent = _this.events[this.eventId];
-          _this.infowindow.setContent();
-          _this.infowindow.open(_this.map, this);
+          _this.infowindow.close();
+          _this.$nextTick(function () {
+            _this.infowindow.setContent(document.getElementById('activeEvent').innerHTML);
+            _this.infowindow.open(_this.map, _this.activeEvent.marker);
+          })
         });
-        _this.events[ev.id] = {
-          event: ev,
-          marker: marker,
-        };
+        ev.marker = marker;
+        _this.events[ev.id] = ev;
       });
       _this.map.fitBounds({
         west: _.min(lng),
@@ -59,9 +59,12 @@ const app = new Vue({
     });
   },
 
+  updated: function() {
+    const _this = this;
+    // after activeEvent section renders
+  },
+
   methods: {
-    clickMarker: function() {
-    },
     geocode: function(results, status) {
       if (status !== google.maps.GeocoderStatus.OK) {
         console.log('error geocoding', status);
@@ -74,35 +77,6 @@ const app = new Vue({
       } catch (e) {
         return true;
       }
-    },
-
-    showPopup: function showPopup(feature) {
-      const _this = this;
-
-      console.log('show popup for ', feature.properties.location);
-      if (this.popup) {
-        this.popup.remove();
-      }
-      // draw popup immediately with name
-      this.popup
-        .setLngLat(feature.geometry.coordinates)
-        .setHTML('<div id="popupContent"><b>' + feature.properties.name + '</b></div>')
-        .addTo(this.map);
-      this.popupLocation = feature.properties.location;
-      // update html when it's ready
-      this.$nextTick(function popup() {
-        // popup.setHTML doesn't update properly
-        _this.popup.remove();
-        _this.popup
-          .setLngLat(feature.geometry.coordinates)
-          .setHTML(document.getElementById('affiliateContent').innerHTML)
-          .addTo(_this.map);
-      });
-    },
-
-    hidePopup: function hidePopup() {
-      this.popup.remove();
-      this.popupLocation = null;
     },
   },
 });
