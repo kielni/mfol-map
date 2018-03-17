@@ -55,8 +55,8 @@ const app = new Vue({
       });
 
       // US + southern Canada bounding box
-      const lat = [55, 24.52];
-      const lng = [-66.95, -124.77];
+      let lat = [55, 24.52];
+      let lng = [-66.95, -124.77];
       _this.map.fitBounds({
         west: _.min(lng),
         south: _.min(lat),
@@ -74,11 +74,57 @@ const app = new Vue({
         if (!places) {
           return;
         }
-        _this.map.setCenter({lat: places[0].geometry.location.lat(),
-          lng: places[0].geometry.location.lng()});
+        const location = places[0].geometry.location;
+        _this.map.setCenter({
+          lat: location.lat(),
+          lng: location.lng()
+        });
         _this.searchBox.set('map', _this.map);
         _this.map.setZoom(10);
+        // find closest event
+        const distances = Object.keys(_this.events).map(function(id) {
+          const ev = _this.events[id];
+          return {
+            id: id,
+            distance: _this.distance(
+              { lat: ev.latitude, lng: ev.longitude },
+              { lat: location.lat(), lng: location.lng() }
+            )
+          };
+        });
+        const closest = _.minBy(distances, 'distance');
+        const ev = _this.events[closest.id];
+
+        ev.distance = closest.distance;
+        _this.activeEvent = _this.events[closest.id];
+        if (closest.distance > 15) { // 30 mi = 400 px at zoom 10
+          lat = [ev.latitude, location.lat()];
+          lng = [ev.longitude, location.lng()];
+          _this.map.fitBounds({
+            west: _.min(lng),
+            south: _.min(lat),
+            east: _.max(lng),
+            north: _.max(lat)
+          });
+        }
       });
     });
   },
+
+  methods: {
+    deg2rad: function(deg) {
+      return deg * (Math.PI / 180);
+    },
+
+    distance: function distance(pt1, pt2) {
+      // distance in mi
+      const dLat = this.deg2rad(pt2.lat - pt1.lat);
+      const dLon = this.deg2rad(pt2.lng - pt1.lng);
+      const a = (Math.sin(dLat / 2) * Math.sin(dLat / 2)) +
+          (Math.cos(this.deg2rad(pt1.lat)) * Math.cos(this.deg2rad(pt2.lat)) *
+           Math.sin(dLon / 2) * Math.sin(dLon / 2));
+
+      return Math.round(0.6213712 * 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+    },
+  }
 });
