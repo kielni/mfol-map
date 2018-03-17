@@ -1,6 +1,6 @@
 const mapjs = document.getElementById('mapjs');
 // pegasus for loading json data in parallel with other scripts.
-const events = pegasus('https://mfol-api.herokuapp.com/api/events');
+const events = pegasus('https://mfol-api.herokuapp.com/api/detailed-events');
 
 const app = new Vue({
   el: '#mapApp',
@@ -8,6 +8,7 @@ const app = new Vue({
     map: null,
     events: {},
     activeEvent: null,
+    eventsLoaded: false,
   },
 
   mounted: function mounted() {
@@ -21,12 +22,12 @@ const app = new Vue({
       mapTypeControl: false,
       streetViewControl: false,
       rotateControl: false,
-      fullscreenControl: false
+      fullscreenControl: false,
     });
     // load json, then draw markers
     events.then(function(data) {
       _this.infowindow = new google.maps.InfoWindow();
-      data.forEach(function(ev) {
+      data.events.forEach(function(ev) {
         // set rsvp and formatted date
         ev.rsvp = 'https://event.marchforourlives.com/event/march-our-lives-events/' +
           ev.id +'/signup';
@@ -43,13 +44,14 @@ const app = new Vue({
           _this.infowindow.close();
           // when rendered, get content from activeEvent div and show in infowindow
           _this.$nextTick(function() {
-            _this.infowindow.setContent(document.getElementById('activeEvent').innerHTML);
+            _this.infowindow.setContent(document.getElementById('activeEventInfo').innerHTML);
             _this.infowindow.open(_this.map, _this.activeEvent.marker);
           })
         });
         // save marker and event by id
         ev.marker = marker;
         _this.events[ev.id] = ev;
+        _this.eventsLoaded = true;
       });
 
       // US + southern Canada bounding box

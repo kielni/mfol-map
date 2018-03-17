@@ -1,6 +1,6 @@
 body {
-  background-color: #fff;
-  font-family: 'Roboto';
+  background-color: #F7F7F7;
+  font-family: "open_sanslight", Helvetica, Arial, sans-serif
 }
 
 html, body {
@@ -12,7 +12,7 @@ html, body {
 }
 
 #map {
-  height: 600px;
+  height: 400px;
 }
 
 #mapApp {
@@ -61,4 +61,44 @@ a.more-details {
 
 #pac-input:focus {
   order-color: #4d90fe;
+}
+
+.rsvp-button {
+  border-radius: 0;
+  display: block;
+  font-family: "VinylOT-Regular", Helvetica, Arial, sans-serif;
+  font-size: 20px;
+  height: auto;
+  margin: 20px 0 25px 0;
+  max-width: 100% !important;
+  outline: none;
+  padding: 14px 0 10px;
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff;
+  background-color: #214781;
+  width: 150px;
+}
+
+.rsvp-button a {
+  color: #fff;
+  text-decoration: none;
+}
+
+#activeEventInfo {
+  display: none;
+}
+
+#activeEvent {
+  margin: 10px;
+  background-color: #fff;
+  padding: 25px;
+}
+
+#activeEvent h2 {
+  font-size: 1.5em;
+}
+
+#activeEvent h4 {
+  margin: 0;
 }

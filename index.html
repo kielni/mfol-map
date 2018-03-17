@@ -6,39 +6,63 @@
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
     <script src="https://unpkg.com/@typicode/pegasus/dist/pegasus.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
-    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
   </head>
   <body class="ragtag-mfol-map">
     <div id="mapApp">
       <input id="pac-input" class="controls" type="text" placeholder="Search for postcode or city">
       <div id="map" class="content"></div>
-    <div id="userMarker">
-      <i class="fa fa-circle"></i>
-    </div>
 
-    <div v-if="activeEvent" id="activeEvent" class="info-window-content">
-      <h2>
-        <a :href="activeEvent.rsvp" target="_blank" class="event-title">
-          {{activeEvent.title}}
-        </a>
-      </h2>
-      <div class="body-content">
-        <div class="details">
-          {{activeEvent.start_dt}}<br>
-          {{activeEvent.address1}}, {{activeEvent.city_etc}}<br>
+      <div v-if="activeEvent" id="activeEvent" class="active-event">
+        <h2>
+          <a :href="activeEvent.rsvp" target="_blank" class="event-title">
+            {{activeEvent.title}}
+          </a>
+        </h2>
+        <div class="body-content">
+          <div class="details">
+            {{activeEvent.venue}}<br>
+            {{activeEvent.address1}}<br>
+            {{activeEvent.city_etc}}
+          </div>
+          <div class="details">
+            <h4>When:</h4>
+            {{activeEvent.start_dt}}<br>
+          </div>
+          <div class="details">
+            {{activeEvent.event_description}}
+          </div>
+          <div class="details">
+            <div class="rsvp-button">
+              <a :href="activeEvent.rsvp" target="_blank">RSVP</a>
+            </div>
+          </div>
         </div>
-        <div class="details">
-          <a :href="activeEvent.rsvp" class="more-details">More details &raquo;</a>
-        </div>
-        <div class="details">
-          <div class="rsvp">
-            <a :href="activeEvent.rsvp">RSVP</a>
+      </div>
+
+      <div v-if="activeEvent" id="activeEventInfo" class="info-window-content">
+        <h2>
+          <a :href="activeEvent.rsvp" target="_blank" class="event-title">
+            {{activeEvent.title}}
+          </a>
+        </h2>
+        <div class="body-content">
+          <div class="details">
+            {{activeEvent.start_dt}}<br>
+            {{activeEvent.address1}}, {{activeEvent.city_etc}}<br>
+          </div>
+          <div class="details">
+            <a :href="activeEvent.rsvp" class="more-details" target="_blank">More details &raquo;</a>
+          </div>
+          <div class="details">
+            <div class="rsvp">
+              <a :href="activeEvent.rsvp" target="_blank">RSVP</a>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <link rel="stylesheet" id="vc_google_fonts_roboto100100italic300300italicregularitalic500500italic700700italic900900italic-css" href="//fonts.googleapis.com/css?family=Roboto%3A100%2C100italic%2C300%2C300italic%2Cregular%2Citalic%2C500%2C500italic%2C700%2C700italic%2C900%2C900italic" type="text/css" media="all">
     <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0xQ57bjRAv9JpC-u14Ps0DwG7EDFJAzU&libraries=places"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script>
